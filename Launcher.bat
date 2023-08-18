@@ -1,4 +1,5 @@
 @echo off
+chcp 65001
 title WebDisk launcher batch
 @node -v >nul 2>nul
 IF %errorlevel% == 9009 (
@@ -9,12 +10,12 @@ IF %errorlevel% == 0 (
     goto launch
     pause
 )
-echo Î´Öª´íÎó:%errorlevel%
+echo æœªçŸ¥é”™è¯¯:%errorlevel%
 pause
 exit
 :needInstall
-    echo Î´ÕÒµ½Nodejs ÊÇ·ñ°²×°
-    echo ÊäÈëi°²×° nÍË³ö r³¢ÊÔÔËĞĞ(ÊÊÓÃÓÚÒÑ°²×°µ«ÈÔÌáÊ¾´ËÏûÏ¢)
+    echo æœªæ‰¾åˆ°Nodejs æ˜¯å¦å®‰è£…
+    echo è¾“å…¥iå®‰è£… né€€å‡º rå°è¯•è¿è¡Œ(é€‚ç”¨äºå·²å®‰è£…ä½†ä»æç¤ºæ­¤æ¶ˆæ¯)
     set /p install=
     IF "%install%" EQU "n" (
         exit
@@ -39,8 +40,8 @@ exit
     exit
 :installError
     title Failed
-    echo ÏÂÔØNodejsÊ§°Ü ÊÇ·ñÖØÊÔ
-    echo ÊäÈërÖØÊÔ nÍË³ö
+    echo ä¸‹è½½Nodejså¤±è´¥ æ˜¯å¦é‡è¯•
+    echo è¾“å…¥ré‡è¯• né€€å‡º
     set /p retry=
     IF "%retry%" EQU "r" (
         goto installNodejs
@@ -57,8 +58,8 @@ exit
 
 :installNodejs
     title Downloading
-    echo ÕıÔÚÏÂÔØNodejs18.16.1
-    echo ÈçÏÂÔØÊ§°ÜÇë×ÔĞĞ½øÈë¹ÙÍøÏÂÔØ°²×°:https://nodejs.org
+    echo æ­£åœ¨ä¸‹è½½Nodejs18.16.1
+    echo å¦‚ä¸‹è½½å¤±è´¥è¯·è‡ªè¡Œè¿›å…¥å®˜ç½‘ä¸‹è½½å®‰è£…:https://nodejs.org
     cd %TEMP%
     curl -o "nodeInstall_wds.msi" --ssl-no-revoke "https://nodejs.org/dist/v18.16.1/node-v18.16.1-x64.msi"
     IF %errorlevel% NEQ 0 (
@@ -66,9 +67,9 @@ exit
         pause
         exit
     )
-    echo ÏÂÔØÍê³É ÇëÊÖ¶¯°²×°
+    echo ä¸‹è½½å®Œæˆ è¯·æ‰‹åŠ¨å®‰è£…
     %TEMP%\nodeInstall_wds.msi
     del %TEMP%\nodeInstall_wds.msi
-    echo ÒÑÉ¾³ı°²×°ÎÄ¼ş
+    echo å·²åˆ é™¤å®‰è£…æ–‡ä»¶
     pause
     exit
