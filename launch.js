@@ -2,7 +2,7 @@ const ChildProcess = require("child_process");
 //检查及安装node_modules
 const {existsSync}=require("fs");
 if (!existsSync("./node_modules/")) {
-    console.log("正在安装node_modules...\n这可能需要几分钟时间");
+    console.log("正在安装node_modules...\n这可能需要几分钟时间\n请勿关闭本窗口");
     ChildProcess.execSync("npm config set registry http://registry.npm.taobao.org/");
     ChildProcess.execSync("npm install --omit=dev");
     console.log("安装完成");
