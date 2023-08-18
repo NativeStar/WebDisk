@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="refresh" content="2;url=/main.disk">
+		<title>Authentication succeed</title>
+	</head>
+	<body>
+		<h3 id="nameText"></h3>
+		<br />
+		稍后将自动跳转
+		<br />
+		(如卡死或异常跳转到此页面请清理浏览器缓存)
+	</body>
+	<script>
+		window.onload=()=>{
+			const accountName=document.cookie.slice(document.cookie.indexOf("account=")+8,(document.cookie.indexOf(";",document.cookie.indexOf("account=")))===-1?document.cookie.length:document.cookie.indexOf(";",document.cookie.indexOf("account=")));
+			document.getElementById("nameText").innerText=`您已成功登录为:${accountName}`
+		}
+	</script>
+</html>

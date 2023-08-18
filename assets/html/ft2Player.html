@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="private must-revalidate max-age=86400">
+		<meta http-equiv="Expires" content="86400">
+		<title>FastTracker2 Web Player</title>
+	</head>
+	<body>
+		<h2 id="title"></h2>
+		<button id="playAndPauseButton" disabled onclick="play(this)">播放</button>
+	</body>
+	<style>
+		body {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		#playAndPauseButton {
+			background-color:white;
+			border-radius: 32px;
+			width: 100px;
+			height: 40px;
+		}
+		#playAndPauseButton:hover{
+			background-color: aliceblue;
+		}
+	</style>
+	<script src="/ft2_main.js"></script>
+	<script src="/ft2_player.js"></script>
+	<script src="/ft2_utils.js"></script>
+	<script>
+		let isPlaying = false;
+		const antiRefresh = setTimeout(() => {
+			window.close()
+		}, 750);
+		const player = new Modplayer();
+		async function init(isPublic = false, name="") {
+			document.getElementById("title").innerText = name
+			clearTimeout(antiRefresh);
+			player.load(isPublic ? `/?action=publicStreamMedia&name=${name}`:`?action=streamMedia&name=${name}`);
+			document.getElementById("playAndPauseButton").disabled = false;
+		}
+
+		function play(buttonEle) {
+			isPlaying ? player.pause() : player.play();
+			buttonEle.innerText = isPlaying ? "播放" : "暂停";
+			isPlaying = !isPlaying;
+		}
+	</script>
+</html>

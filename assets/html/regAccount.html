@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>注册新账户</title>
+	</head>
+	<body>
+		<h2 class="title">注册</h2>
+		<input type="text" placeholder="用户名" style="margin-top: 2" id="textInput" maxlength="16"/>
+		<input type="password" placeholder="密码" style="margin-top: 2%" id="passwordInput" maxlength="64"/>
+		<input type="password" placeholder="确认密码" style="margin-top: 2%" id="passwordInputRep" maxlength="64"/>
+		<input type="email" placeholder="邮箱" style="margin-top: 2%" id="emailInput" maxlength="48"/>
+		<small style="color: gray;margin-top: 1%;">邮箱用于找回密码</small>
+		
+		<button type="button" id="submitButton" onclick="submitReg()">注册</button>
+	</body>
+	<style>
+		body{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		.title{
+			margin-top: 8%;
+		}
+		#submitButton{
+			margin-top: 2%;
+			width: 12%;
+			background-color: aquamarine;
+		}
+		#submitButton:hover{
+			background-color: chartreuse;
+		}
+	</style>
+	<script>
+		
+		const emailReg = new RegExp("^[a-zA-Z0-9]+([-_.][A-Za-zd]+)*@([a-zA-Z0-9]+[-.])+[A-Za-zd]{2,5}$");
+		const wordFilter=new RegExp("^[0-9a-zA-Z]+$");
+		document.getElementById("emailInput").onkeydown = (key) => {
+			if (key.keyCode === 13) { //回车
+				submitReg();
+			}
+		}
+		async function submitReg(){
+			let creActReq;
+			const regButton=document.getElementById("submitButton");
+			const [accountValue,passwordValue,emailValue]=[document.getElementById("textInput").value.toString(),document.getElementById("passwordInput").value.toString(),document.getElementById("emailInput").value.toString()];
+			// 判断是否都完成填写
+			if(passwordValue!==document.getElementById("passwordInputRep").value.toString()){
+				alert("两次输入密码不一致");
+				return
+			}
+			/* 长度限制 后端也要
+				账号: 16 
+				密码：64
+				邮箱：48*/
+			if([accountValue,passwordValue,emailValue].some(value=>{return value.length<=3})){
+				alert("请正确填写:输入内容过短");
+				return
+			}
+			//输入内容过滤 只允许字母和数字
+			if([accountValue,passwordValue].some(value=>{return !wordFilter.test(value)})){
+				alert("请正确填写:只允许输入大小写字母和数字");
+				return
+			}
+			if(accountValue.length>16||passwordValue.length>64||emailValue.length>48){
+				alert("数据长度异常");
+				return
+			}
+			if(!emailReg.test(emailValue)){
+				alert("邮箱格式不正确");
+				return
+			}
+			regButton.disabled=true;
+			regButton.innerText="请求中";
+			try{
+				creActReq=await (await fetch(`/?action=reg&account=${accountValue}&email=${emailValue}&password=${passwordValue}`,{credentials:"include"})).json();
+			}catch(e){
+				alert("发送请求失败\n这可能是网络或服务器问题");
+				regButton.disabled=false;
+				regButton.innerText="注册";
+				return
+			}
+			switch(creActReq.code){
+				case 200:
+					alert("注册成功");
+					window.location.href="/"
+					break
+				case 101:
+					//输入长度
+					alert("注册失败:输入数据长度异常");
+					break
+				case 102:
+					//邮箱
+					alert("注册失败:邮箱校验未通过");
+					break
+				case 103:
+					//账号已被注册
+					alert("注册失败:该用户名已被注册\n请更换");
+					break
+				case 104:
+					//含有不合规字符
+					alert("注册失败:含有不合规字符\n只允许大小写字母和数字");
+					break
+				case 105:
+					//用户名有屏蔽词
+					alert("注册失败:用户名包含屏蔽词\n请修改");
+					break
+				case 106:
+					//注册功能被关闭
+					alert("管理员已停用账户注册功能");
+					window.location.href="/"
+					break
+				case 107:
+					// Windows保留字
+					alert("不允许注册此用户名");
+					break
+				case 108:
+					//邮箱被使用
+					alert("该邮箱已被使用");
+					break
+				case 109:
+					alert("当前IP每日注册账户数已达限制");
+					break
+				case 300:
+					//请求被忽略 不应该出现 可能删掉
+					alert("未知异常");
+					break
+			}
+			regButton.disabled=false;
+			regButton.innerText="注册";
+		}
+	</script>
+</html>

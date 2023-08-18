@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="refresh" content="3;url=/index.myWeb">
+		<title>Authentication Failed</title>
+	</head>
+	<body>
+		登录失败,请重新登录
+		<br />
+		可能是账号在别处登录过或登录过期
+		<br />
+		请等待自动跳转
+		<br />
+		如卡死在此页请清理浏览器缓存
+		<br />
+		登录成功但仍然一直跳转到此页情更新浏览器至最新版本(请勿使用IE)
+	</body>
+	<script>
+		document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+		document.cookie = "account=; expires=Thu, 01 Jan 1970 00:00:00 GMT;"
+	</script>
+</html>

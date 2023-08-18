@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="private must-revalidate max-age=86400">
+		<meta http-equiv="Expires" content="86400">
+		<title>WebSocket Log Page</title>
+	</head>
+	<body style="word-wrap:break-word;" ondragstart="return false">
+		<div id="connectingDiv">
+			<b id="connectingText">连接中...</b>
+			<br />
+		</div>
+	</body>
+	<style>
+		.BLACK{
+			/* 黑色 正常内容 */
+			color: black
+		}
+		.YELLOW{
+			/* 黄色 */
+			color: rgb(231, 231, 23);
+		}
+		.RED{
+			color: red;
+			/* 红色 */
+		}
+		.GRAY{
+			color:gray;
+		}
+		.GREEN{
+			color: green;
+		}
+	</style>
+	<script>
+		let ws,memTotal=0;
+		const memText=window.parent.document.getElementById("memInfo");
+		window.isInit=false;
+		window.autoScroll=true;
+		async function init(url,requestMeminfo=false){
+			window.isInit=true;
+			ws=new WebSocket(url);
+			ws.onerror=()=>{
+				document.getElementById("connectingText").innerText="连接失败";
+				document.getElementById("connectingText").className="RED";
+				memText.innerText="获取失败";
+				return
+			}
+			ws.onopen=(event)=>{
+				onWebSocketConnect(event,requestMeminfo);
+			}
+		}
+		async function onWebSocketConnect(event,reqMem){
+			ws.send(JSON.stringify({action:"getAllLogs"}));
+			if(reqMem) ws.send(JSON.stringify({action:"postMemInfo"}));
+			ws.onmessage=(event)=>{
+				const json=JSON.parse(event.data);
+				switch(json.action){
+					case "resp_allLog":
+						initLogs(event);
+						break
+					case "update":
+						appendLog(json.data[0],json.data[1]);
+						break
+					case "memInit":
+						memTotal=parseInt(json.totalMem/1024/1024)
+						break
+					case "memInfo":
+						memText.innerText=`服务器总内存:${memTotal}MB 剩余内存:${parseInt(json.free/1024/1024)}MB`;
+						break
+				}
+			}
+			ws.onclose=()=>{
+				try {
+					if(Notification.permission==="granted"){
+						new Notification("连接断开",{requireInteraction:true,body:"实时日志连接已断开\n将无法同步服务端新日志消息",silent:true,tag:"connectionClose"});
+						document.getElementById("connectingText").innerText="连接断开";
+						document.getElementById("connectingDiv").hidden=false;
+						document.getElementById("connectingText").className="RED";
+						return
+					}
+				} catch (error) {}
+				alert("服务器中断连接");
+				document.getElementById("connectingText").innerText="连接断开";
+				document.getElementById("connectingDiv").hidden=false;
+				document.getElementById("connectingText").className="RED";
+			}
+		}
+		function onChanged(){
+			setTimeout(() => {
+				if(window.autoScroll) window.scrollTo(window.innerWidth,window.innerHeight);
+			}, 0);
+		}
+		function scrollToButtom(){
+			if(window.autoScroll) window.scrollTo(window.innerWidth,window.innerHeight);
+		}
+		function initLogs(event){
+			document.getElementById("connectingDiv").hidden=true;
+			const logArray=JSON.parse(event.data);
+			logArray.data.forEach((value)=>{
+				const tempNode=document.createElement("a");
+				tempNode.innerText=value.text;
+				tempNode.className=value.color;
+				document.body.appendChild(tempNode);
+				document.body.appendChild(document.createElement("br"));
+			});
+			window.scrollTo(window.innerWidth,window.innerHeight);
+		}
+		function appendLog(color,str){
+			const tempNode=document.createElement("a");
+			tempNode.innerText=str;
+			tempNode.className=color;
+			document.body.appendChild(tempNode);
+			document.body.appendChild(document.createElement("br"));
+			if(window.autoScroll) window.scrollTo(0,document.body.scrollHeight);
+		}
+	</script>
+</html>

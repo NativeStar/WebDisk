@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="private must-revalidate max-age=86400">
+		<meta http-equiv="Expires" content="86400">
+		<title>SNES-SPC700 Sound File Player</title>
+	</head>
+	<body>
+		<h2 id="title"></h2>
+		<button id="playAndPauseButton" disabled onclick="play(this)">暂停</button>
+	</body>
+	<style>
+		body {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		
+		#playAndPauseButton {
+			background-color:white;
+			border-radius: 32px;
+			width: 100px;
+			height: 40px;
+		}
+		#playAndPauseButton:hover{
+			background-color: aliceblue;
+		}
+	</style>
+	<script>
+		// 闲的没事照顾下IE
+		if(window.WebAssembly==undefined){
+			alert("无法播放:浏览器不支持WebAssembly");
+			window.close();
+		}
+	</script>
+	<script src="/spc700Player.js"></script>
+	<script>
+		const antiRefresh = setTimeout(() => {
+			window.close()
+		}, 750);
+		let spcFileBuffer;
+		const controlButtonElem=document.getElementById("playAndPauseButton");
+		async function init(isPublic = false, name="") {
+			document.getElementById("title").innerText = name
+			clearTimeout(antiRefresh);
+			let spcFileRaw=await fetch(isPublic?`/?action=publicStreamMedia&name=${name}`:`?action=streamMedia&name=${name}`);
+			if (spcFileRaw.status===400) {
+				alert("管理员已关闭在线播放");
+				window.close();
+				return
+			}else if (spcFileRaw.status!==200) {
+				alert(`获取文件失败 请重新尝试播放\n状态码:${spcFileRaw.status}`);
+				window.close();
+				return
+			}
+			spcFileBuffer=await spcFileRaw.arrayBuffer();
+			spcFileRaw=null;
+			controlButtonElem.disabled=false;
+			SMWCentral.SPCPlayer.onPlay=()=>{
+				controlButtonElem.innerText="暂停";
+			}
+			SMWCentral.SPCPlayer.onPause=()=>{
+				controlButtonElem.innerText="播放";
+			}
+			SMWCentral.SPCPlayer.loadSPC(spcFileBuffer);
+			SMWCentral.SPCPlayer.Backend.setVolume(1.5);
+		}
+		function play(elem){
+			if(elem.innerText==="暂停"){
+				SMWCentral.SPCPlayer.Backend.unlock()
+				elem.innerText="播放";
+				SMWCentral.SPCPlayer.Backend.pause();
+			}else{
+				SMWCentral.SPCPlayer.Backend.unlock()
+				elem.innerText="暂停";
+				SMWCentral.SPCPlayer.Backend.resume();
+			}
+		}
+	</script>
+</html>

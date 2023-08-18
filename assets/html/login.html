@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="private must-revalidate max-age=86400">
+		<meta http-equiv="Expires" content="86400">
+		<meta name="viewport" content="width=device-width">
+		<link rel="stylesheet" href="./login.webStyle">
+		<title>登录存储盘</title>
+	</head>
+	<body ondragstart="return false">
+		<a href="javascript:useHttps()" id="useHttpsText">改为使用HTTPS以保证数据安全</a><br />
+		<div id="httpTips">
+			<small>当前网络协议为明文通讯的HTTP</small><br />
+			<small>您的数据可能会被攻击者或网络运营商截获</small><br />
+			<small>推荐使用进行加密传输的HTTPS协议</small>
+		</div>
+		<div class="loginMain">
+			<h1>Login</h1>
+		</div>
+		<div class="accountInput" onclick="document.getElementById('accountInputEle').focus()">
+			<h5>用户名</h5>
+			<input type="text" maxlength="32" id="accountInputEle" autofocus placeholder="Account" />
+		</div>
+		<div class="passwordInput">
+			<h5>密码</h5>
+			<input maxlength="64" type="password" id="passwordInputEle" placeholder="Password" />
+		</div>
+		<div class="loginButton">
+			<button type="button" class="buttonEle" id="loginButtonView">登录</button>
+		</div>
+		<button id="regNew" onclick="window.location.href='/Hello.welcomeRegister'">注册</button>
+		<div class="remBox">
+			<label for="rememberLogin">30天内记住登录</label>
+			<input type="checkbox" id="rememberLogin" />
+		<a href="javascript:void(0)" id="findPasswordText" onclick="window.open('/password.rst','rstPwd',`height=${window.screen.width/1.5},width=${window.screen.width/1.5},left=${(window.screen.width-(window.screen.width/1.5))/2},top=0`)">忘记密码</a>
+		</div>
+		<a href="javascript:void(0)" id="publicFileText" onclick="window.open('/public.shareList')">公开文件分享区</a>
+		<h5 hidden id="loginText" class="loginTextClass">登录中...</h5>
+	</body>
+	<script type="text/javascript">
+		const xhr = new XMLHttpRequest();
+		const loginTextEle = document.getElementById("loginText");
+		const loginButtonEle = document.getElementById("loginButtonView");
+		let httpsCacheObj = null;//只获取一次HTTPS状态
+		if (window.location.protocol.toLowerCase() === "https:") { //判断https
+			document.getElementById("useHttpsText").style = 'color:green;';
+			document.getElementById("httpTips").hidden = true
+		}
+		xhr.onreadystatechange = (event) => {
+			if (event.target.readyState === 4) { //状态
+				loginTextEle.hidden = true;
+				if (event.target.status === 200) {
+					//请求成功响应 检查返回值
+					if (xhr.responseText === "FAILED") {
+						alert("账号或密码错误");
+						loginButtonEle.disabled = false;
+						return
+					} else if (xhr.responseText === "UA DETECT FAILED") {
+						alert("未通过UserAgent校验");
+						loginButtonEle.disabled = false;
+						return
+					} else if (xhr.responseText === "LOGIN-UA-WARN") {
+						alert("登录成功\n您开启了登录时UserAgent验证但未设置验证用UserAgent\n请前往个人中心-安全设置进行修改\n否则该选项无效");
+					}else if(xhr.responseText==="LIMIT"){
+						alert("失败次数过多 请稍后再试");
+						loginButtonEle.disabled=false;
+						return
+					}
+					//成功
+					try {
+						setTimeout(() => {
+							window.location.href = "./main.disk"
+						}, 200)
+
+					} catch (error) {
+						alert(`重定向失败:\n${error}`)
+					}
+				} else {
+					//连接失败
+					alert(`登录失败 状态码:${event.target.status}\n可能是服务器或网络异常`);
+					loginButtonEle.disabled = false
+				}
+			}
+		}
+		document.getElementById("loginButtonView").onclick = () => {
+			if (document.getElementById("accountInputEle").value.length === 0 || document.getElementById(
+					"passwordInputEle").value.length === 0) {
+				alert("账号及密码不能为空");
+				return
+			}
+			loginButtonEle.disabled = true;
+			loginTextEle.hidden = false;
+			xhr.open("GET",
+				`?action=login&account=${document.getElementById("accountInputEle").value.toString()}&password=${document.getElementById("passwordInputEle").value.toString()}&remembar=${document.getElementById("rememberLogin").checked}`
+				);
+			xhr.send();
+		}
+		document.onkeydown = (event) => {
+			if (event.keyCode === 13 && !loginButtonEle.disabled) document.getElementById("loginButtonView").onclick();
+		}
+		async function useHttps() {
+			if (window.location.protocol.toLowerCase() === "https:") { //判断https
+				alert("你当前正在使用HTTPS协议\n所有与服务器间的通讯将被加密传输 不会被篡改及截获\n(包括密码 上下行文件数据等)");
+				return
+			}
+			let https;
+			if (!httpsCacheObj) {
+				try {
+					https = await (await fetch("/?action=getHttpsPort")).json();
+					httpsCacheObj = https;
+				} catch (e) {
+					alert("获取HTTPS状态失败");
+					return
+				}
+			}else{
+				https=httpsCacheObj;
+			}
+			switch (https.code) {
+				case 200:
+					//成功
+					if (confirm(
+							"由于自签证书无法通过浏览器校验,会弹出窗口进行拦截\n需要手动在窗口中选择'继续前往'(依浏览器而异)\n如Chrome中点击'高级'-'继续前往*****'\n请放心 浏览器验证不通过并不影响数据加密"
+							)) {
+						window.location.href = `https://${window.location.host}:${https.port}`
+					}
+					break
+				case 403:
+					//未开启
+					alert("管理员未启用HTTPS功能");
+					break
+				case 500:
+					//服务端https开启失败
+					alert("服务端HTTPS功能开启失败,请联系管理员处理");
+					break
+				default:
+					//未定义
+					alert("未知异常");
+					break
+			}
+		}
+	</script>
+</html>

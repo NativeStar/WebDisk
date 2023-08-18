@@ -1,0 +1,314 @@
+[
+    {
+        "cmd": "help",
+        "arg": [
+            {
+                "name": "cmd",
+                "type": "string",
+                "desc": "要查看帮助的指令名称"
+            }
+        ],
+        "desc": "提供帮助/指令列表"
+    },
+    {
+        "cmd": "lock",
+        "desc": "锁定控制台",
+        "arg": [
+            {
+                "name": "password?",
+                "type": "string",
+                "desc": "(可选)锁定控制台的密码"
+            }
+        ]
+    },
+    {
+        "cmd": "unlock",
+        "desc": "解锁控制台",
+        "arg": [
+            {
+                "name": "password?",
+                "type": "string",
+                "desc": "锁定控制台的密码 如未设定请忽略"
+            }
+        ]
+    },
+    {
+        "cmd": "clear",
+        "desc": "清空控制台信息",
+        "arg": []
+    },
+    {
+        "cmd": "shutdown",
+        "desc": "关闭服务器",
+        "arg": [
+            {
+                "name": "closeAllConnections",
+                "type": "boolean",
+                "desc": "强制断开所有连接(默认false)"
+            }
+        ]
+    },
+    {
+        "cmd": "account",
+        "desc": "账户管理",
+        "arg": [],
+        "methods": [
+            [
+                {
+                    "arg": "list",
+                    "type": "action"
+                }
+            ],
+            [
+                {
+                    "arg": "create",
+                    "type": "action"
+                },
+                {
+                    "arg": "account",
+                    "type": "string"
+                },
+                {
+                    "arg": "password",
+                    "type": "string"
+                },
+                {
+                    "arg": "email",
+                    "type": "string"
+                }
+            ],
+            [
+                {
+                    "arg": "remove",
+                    "type": "action"
+                },
+                {
+                    "arg": "account",
+                    "type": "string"
+                },
+                {
+                    "arg": "removeStorage?",
+                    "type": "boolean"
+                }
+            ],
+            [
+                {
+                    "arg": "getConfig",
+                    "type": "action"
+                },
+                {
+                    "arg": "account",
+                    "type": "string"
+                }
+            ],
+            [
+                {
+                    "arg": "setConfig",
+                    "type": "action"
+                },
+                {
+                    "arg": "account",
+                    "type": "string"
+                },
+                {
+                    "arg": "config",
+                    "type": "string"
+                },
+                {
+                    "arg": "value",
+                    "type": "any"
+                }
+            ],
+            [
+                {
+                    "arg": "logout",
+                    "type": "action"
+                },
+                {
+                    "arg": "account",
+                    "type": "string"
+                }
+            ],
+            [
+                {
+                    "arg": "deleteDisabledAccount",
+                    "type": "action"
+                }
+            ]
+        ]
+    },
+    {
+        "cmd": "config",
+        "desc": "服务端配置更改",
+        "arg": [],
+        "methods": [
+            [
+                {
+                    "arg": "get",
+                    "type": "action"
+                }
+            ],
+            [
+                {
+                    "arg": "set",
+                    "type": "action"
+                },
+                {
+                    "arg": "mailerConfig",
+                    "type": "action"
+                },
+                {
+                    "arg": "email",
+                    "type": "string"
+                },
+                {
+                    "arg": "pass",
+                    "type": "string"
+                },
+                {
+                    "arg": "host",
+                    "type": "string"
+                },
+                {
+                    "arg": "port",
+                    "type": "number"
+                }
+            ],
+            [
+                {
+                    "arg": "set",
+                    "type": "action"
+                },
+                {
+                    "arg": "config",
+                    "type": "string"
+                },
+                {
+                    "arg": "value",
+                    "type": "any"
+                }
+            ]
+        ]
+    },
+    {
+        "cmd": "getStatistics",
+        "desc": "获取服务器使用统计信息",
+        "arg": [],
+        "methods": []
+    },
+    {
+        "cmd": "share",
+        "desc": "分享管理",
+        "arg": [],
+        "methods": [
+            [
+                {
+                    "arg": "list",
+                    "type": "action"
+                }
+            ],
+            [
+                {
+                    "arg": "list",
+                    "type": "action"
+                },
+                {
+                    "arg": "account?",
+                    "type": "string"
+                }
+            ],
+            [
+                {
+                    "arg": "removeAccount",
+                    "type": "action"
+                },
+                {
+                    "arg": "account",
+                    "type": "string"
+                }
+            ],
+            [
+                {
+                    "arg": "removeId",
+                    "type": "action"
+                },
+                {
+                    "arg": "id",
+                    "type": "string"
+                }
+            ]
+        ]
+    },
+    {
+        "cmd": "nickname",
+        "desc": "昵称审核",
+        "arg": [],
+        "methods": [
+            [
+                {
+                    "arg": "list",
+                    "type": "action"
+                }
+            ],
+            [
+                {
+                    "arg": "agree",
+                    "type": "action"
+                },
+                {
+                    "arg": "account",
+                    "type": "string"
+                }
+            ],
+            [
+                {
+                    "arg": "reject",
+                    "type": "action"
+                },
+                {
+                    "arg": "account",
+                    "type": "string"
+                }
+            ]
+        ]
+    },
+    {
+        "cmd":"refreshPublicFile",
+        "desc":"刷新公开文件列表",
+        "arg":[],
+        "methods":[]
+    },
+    {
+        "cmd":"banip",
+        "desc":"管理IP封禁",
+        "arg":[],
+        "methods":[
+            [
+                {
+                    "arg":"list",
+                    "type":"action"
+                }
+            ],
+            [
+                {
+                    "arg":"add",
+                    "type":"action"
+                },
+                {
+                    "arg":"ip",
+                    "type":"string"
+                }
+            ],
+            [
+                {
+                    "arg":"remove",
+                    "type":"action"
+                },
+                {
+                    "arg":"ip",
+                    "type":"string"
+                }
+            ]
+        ]
+    }
+]

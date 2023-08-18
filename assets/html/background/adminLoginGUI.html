@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="private must-revalidate max-age=86400">
+		<meta http-equiv="Expires" content="86400">
+		<title>WEBDISK BACKGROUND LOGIN GUI</title>
+		<link href="favicon.ico" rel="icon" type="image/x-icon"/>
+	</head>
+	<body>
+		<div id="passwordDiv">
+			<label>KEY</label><br />
+			<input autofocus maxlength="128" id="keyInput" type="password"/><br />
+		</div>
+		<button type="button" id="loginButton" onclick="postKey()">LOGIN</button>
+	</body>
+	<style>
+		body{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+		#passwordDiv{
+			padding-top: 20%;
+		}
+		#loginButton{
+			margin-top: 2%;
+			width: 12%;
+			background-color: aquamarine;
+		}
+		#loginButton:hover{
+			background-color: aqua;
+		}
+	</style>
+	<script>
+		document.onkeydown=(event)=>{
+			if(event.keyCode===13) postKey()
+		}
+		async function postKey(){
+			// let resp;
+			const keyValue=document.getElementById("keyInput").value.toString();
+			try{
+				let resp=await (await fetch("/",{method:"POST",
+				headers:{'Content-Type': 'application/json'},
+				credentials:"include",
+				body:JSON.stringify({
+					action:"LOGIN",
+					key:keyValue
+				})
+				})).text();
+				switch (resp){
+					case "LOGIN":
+						//成功
+						window.location.href="/manager.wpgi";
+						break;
+					case "Failed":
+						//密钥错误
+						alert("密钥错误")
+						break
+					default:
+						alert("登录异常")
+						break;
+				}
+			}catch(e){
+				alert("登录异常");
+				return
+			}
+		}
+	</script>
+</html>

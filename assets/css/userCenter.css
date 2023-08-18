@@ -1,0 +1,112 @@
+.logout_href {
+    color: red;
+    float: right;
+    margin-right: 3%;
+}
+
+.logout_href:hover {
+    color: #234223;
+}
+
+#mainInfoDiv {
+    padding-right: 12%;
+    float: right;
+    width: 70%;
+    margin-right: 3%;
+}
+
+#nickNameDialog {
+    position: absolute;
+    border-radius: 15px;
+    top: 30%;
+}
+
+#uaDialog {
+    position: absolute;
+    border-radius: 15px;
+    top: 30%;
+}
+
+#emailDialog {
+    position: absolute;
+    border-radius: 15px;
+    top: 30%;
+}
+
+#passwordDialog {
+    position: absolute;
+    border-radius: 15px;
+    top: 30%;
+}
+
+#shareManagerDiv {
+    padding-right: 12%;
+    float: right;
+    width: 70%;
+    margin-right: 3%;
+}
+
+#otherFunctionDiv {
+    padding-right: 12%;
+    float: right;
+    width: 70%;
+    margin-right: 3%;
+}
+
+#accountSafeDiv {
+    padding-right: 12%;
+    float: right;
+    width: 70%;
+    margin-right: 3%;
+}
+
+.menu_main {
+    list-style: none;
+    padding-left: 0;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    padding-left: 1%;
+    width: 6%;
+    border: 5px;
+    border-style: double;
+    user-select: none;
+}
+
+.menu_main a {
+    color: gray;
+    text-decoration: none;
+}
+
+.menu_main a:hover {
+    color: cornflowerblue;
+}
+
+#sharedFileListTable tr {
+    line-height: 24px;
+}
+
+#sharedFileListTable a {
+    text-decoration: none;
+}
+
+#sharedFileListTable {
+    width: 90%;
+    margin-left: 5%;
+    border-radius: 8px;
+}
+
+#sharedFileListTable td {
+    line-height: 20px;
+    width: 36%;
+    border: 0px;
+}
+
+.removeShare {
+    background-color: #ec4b4b;
+    border-radius: 3px;
+    margin-left: 16px;
+}
+
+.removeShare:hover {
+    background-color: #d94545;
+}

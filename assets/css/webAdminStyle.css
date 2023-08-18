@@ -1,0 +1,253 @@
+.menu_main {
+    list-style: none;
+    padding-left: 0;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    padding-left: 1%;
+    width: 6%;
+    border: 5px;
+    border-style: double;
+}
+
+.menu_main a {
+    color: gray;
+    text-decoration: none;
+}
+
+.menu_main a:hover {
+    color: cornflowerblue;
+}
+
+.statisticsTextRight {
+    margin-left: 5%;
+}
+
+.dialogs {
+    position: absolute;
+    border-radius: 15px;
+    top: 20%;
+}
+
+#userShareTable a:hover {
+    color: greenyellow;
+}
+
+.htmlSwitch {
+    width: 64px;
+    height: 24px;
+    padding-left: 1%;
+}
+
+/* 设置div */
+.settingDiv {
+    padding-right: 12%;
+    float: right;
+    width: 70%;
+    margin-right: 3%;
+}
+
+.table_style {
+    width: 90%;
+    margin-left: 5%;
+    border-radius: 8px;
+    margin-top: 1%;
+}
+
+.table_style td {
+    line-height: 20px;
+    width: 24%;
+    border: 0px;
+}
+
+.table_style tr {
+    line-height: 24px;
+}
+
+.table_style a {
+    text-decoration: none;
+}
+
+#resetToken {
+    background-color: burlywood;
+    border: 1px;
+    border-radius: 3px;
+}
+
+#resetToken:hover {
+    background-color: bisque;
+}
+
+#bootServer {
+    background-color: chartreuse;
+    margin-left: 3%;
+    border: 1px;
+    border-radius: 3px;
+}
+
+#bootServer:hover {
+    background-color: aquamarine;
+}
+
+#shutdownServer {
+    background-color: brown;
+    margin-left: 3%;
+    border: 1px;
+    border-radius: 3px;
+}
+
+#refreshStatisticsButton {
+    background-color: steelblue;
+    margin-left: 3%;
+    border: 1px;
+    border-radius: 3px;
+}
+
+#refreshStatisticsButton:hover {
+    background-color: skyblue;
+}
+
+#shutdownServer:hover {
+    background-color: red;
+}
+
+.nickname_agree {
+    background-color: lawngreen;
+    margin-left: 3%;
+    border: 1px;
+    border-radius: 3px;
+}
+
+.nickname_agree:hover {
+    background-color: palegreen;
+}
+
+.nickname_reject {
+    background-color: mediumvioletred;
+    margin-left: 3%;
+    border: 1px;
+    border-radius: 3px;
+}
+
+.nickname_reject:hover {
+    background-color: palevioletred;
+}
+
+.button_blue {
+    background-color: royalblue;
+    margin-left: 3%;
+    border: 1px;
+    border-radius: 3px;
+}
+
+.button_blue:hover {
+    background-color: deepskyblue;
+}
+
+#createNewAccountButton {
+    background-color: lawngreen;
+    margin-left: 3%;
+    border: 1px;
+    border-radius: 3px;
+}
+
+#createNewAccountButton:hover {
+    background-color: palegreen;
+}
+
+#publicFileText {
+    color: green;
+    text-decoration: none;
+    float: right;
+    margin-right: 1%;
+    margin-top: -3%;
+}
+
+#publicFileUploadButton {
+    background-color: lightgreen;
+    border: 1px;
+    border-radius: 3px;
+    float: right;
+    margin-right: 18%;
+    margin-top: -3%;
+}
+
+#publicFileUploadButton:hover {
+    background-color: springgreen;
+}
+
+#publicFileText:hover {
+    color: greenyellow;
+}
+
+#setMailerConfigButton {
+    margin: 1%;
+    background-color: lavender;
+    border: 1px;
+    border-radius: 3px;
+}
+
+#setMailerConfigButton:hover {
+    background-color: lavenderblush;
+}
+
+.logFrameStyle {
+    border: none;
+    height: calc(100vh - 125px);
+    width: calc(100vw - 260px);
+}
+
+.share_remove {
+    background-color: red;
+    margin-left: 3%;
+    border: 1px;
+    border-radius: 3px;
+}
+
+.share_remove:hover {
+    background-color: orangered;
+}
+
+.downloadUserLogButton {
+    background-color: lightgoldenrodyellow;
+    margin-left: 3%;
+    border: 1px;
+    border-radius: 3px;
+}
+
+.downloadUserLogButton:hover {
+    background-color: lightyellow;
+}
+
+.account_info {
+    background-color: lightblue;
+    margin-left: 3%;
+    border: 1px;
+    border-radius: 3px;
+}
+
+.account_info:hover {
+    background-color: skyblue;
+}
+
+.button_true {
+    background-color: greenyellow;
+    border: 1px;
+    border-radius: 3px;
+    margin-left: 3%;
+    margin-top: -1%;
+}
+.button_true:hover{
+    background-color: rgb(25, 158, 25);
+}
+
+.button_false {
+    background-color: indianred;
+    border: 1px;
+    border-radius: 3px;
+    margin-left: 3%;
+    margin-top: -1%;
+}
+
+.text_red {
+    color: red;
+}

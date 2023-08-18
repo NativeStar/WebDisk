@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+		<meta http-equiv="Expires" content="0">
+		<link rel="stylesheet" href="/bgStyle.css" />
+		<title>管理面板</title>
+	</head>
+	<body ondragstart="return false">
+		<dialog id="newAccountDialog" class="dialogs">
+			<h3 style="margin-left: 16%;">创建新账户</h3>
+			<h5>用户名</h5>
+			<input type="text" id="newAccount_userNameInput" autocomplete="off" maxlength="16" />
+			<h5>密码</h5>
+			<input type="password" id="newAccount_passwordInput" autocomplete="off" maxlength="64" />
+			<h5>邮箱</h5>
+			<input type="email" id="newAccount_emailInput" autocomplete="off" maxlength="48" value="custom@dev.com"/>
+			<div style="margin: 3%;">
+				<button style="float: left;border-radius: 8px;background-color: aquamarine;"
+					onclick="createNewAccount()">确定</button>
+				<button style="float: right;background-color: deeppink; border-radius: 8px;"
+					onclick="this.parentNode.parentNode.close()">取消</button>
+			</div>
+		</dialog>
+		<dialog id="mailerConfigDialog" class="dialogs">
+			<h3 style="margin-left: 16%;">发件邮箱配置</h3>
+			<h5>邮箱账户</h5>
+			<input type="email" id="mailerConfig_emailInput" autocomplete="email" maxlength="64" />
+			<h5>授权码</h5>
+			<input type="text" id="mailerConfig_passInput" autocomplete="off" maxlength="64" />
+			<h5>域名</h5>
+			<input type="text" id="mailerConfig_hostInput" autocomplete="url" maxlength="64"/>
+			<h5>端口</h5>
+			<input type="number" id="mailerConfig_port" maxlength="5" min="0" max="65535"/>
+			<div style="margin: 3%;">
+				<button style="float: left;border-radius: 8px;background-color: aquamarine;"
+					onclick="setMailerConfig()">确定</button>
+				<button style="float: right;background-color: deeppink; border-radius: 8px;"
+					onclick="this.parentNode.parentNode.close()">取消</button>
+			</div>
+		</dialog>
+		<dialog id="renamePublicFileDialog" class="dialogs">
+			<h3 style="margin-left: 16%;">重命名文件</h3>
+			<input type="text" id="publicFile_newNameInput" autocomplete="off" maxlength="16" />
+			<div style="margin: 3%;">
+				<button style="float: left;border-radius: 8px;background-color: aquamarine;"
+					onclick="renamePublicFile(this.parentNode.parentNode.fileName,document.getElementById('publicFile_newNameInput').value.toString())">确定</button>
+				<button style="float: right;background-color: deeppink; border-radius: 8px;"
+					onclick="this.parentNode.parentNode.close()">取消</button>
+			</div>
+		</dialog>
+		<dialog id="addBanipDialog" class="dialogs">
+			<h3 style="margin-left: 16%;">增加封禁IP</h3>
+			<input type="text" id="banip_ipInput" autocomplete="off" maxlength="32" />
+			<div style="margin: 3%;">
+				<button style="float: left;border-radius: 8px;background-color: aquamarine;"
+					onclick="addBanip(document.getElementById('banip_ipInput').value.toString())">确定</button>
+				<button style="float: right;background-color: deeppink; border-radius: 8px;"
+					onclick="this.parentNode.parentNode.close()">取消</button>
+			</div>
+		</dialog>
+		<div id="controlDiv" class="settingDiv">
+			<h3>设置与指令</h3>
+			<h5>操作</h5>
+			服务器状态:
+			<a id="serverStateText">获取中</a>
+			<button type="button" id="resetToken" onclick="resetToken()">安全退出</button>
+			<button type="button" id="bootServer" onclick="bootServer()">开启服务器</button>
+			<button type="button" id="shutdownServer" onclick="shutdownServer()">关闭服务器</button>
+			<button type="button" id="refreshStatisticsButton" onclick="initStatistics()">刷新数据</button>
+			<h5>统计信息(本次启动)</h5>
+			<div style="display: flex;flex-direction: row;margin-top: 3%;">
+				<a id="text_downloadFile">下载文件:Loading</a>
+				<a class="statisticsTextRight" id="text_uplaodFile">上传文件:Loading</a>
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 3%;">
+				<a id="text_loginCount">登录数量:Loading</a>
+				<a class="statisticsTextRight" id="text_streamMedia">流媒体播放:Loading</a>
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 3%;">
+				<a id="text_newShare">新增分享:Loading</a>
+				<a class="statisticsTextRight" id="text_reg">新增注册:Loading</a>
+			</div>
+			<br />
+			<a style="font-weight: bold;">修改配置</a>
+			<button id="setMailerConfigButton" onclick="showEmailConfigDialog()">验证码邮箱配置</button>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a>调试模式(需要重启 仅部分功能生效)</a>
+				<img id="config_debug" onclick="changeConfig('debug',this,false)" class="htmlSwitch" /><br />
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a>启用HTTPS(需要重启 后端生效需服务器完全重启)</a>
+				<img id="config_enableHTTPS" onclick="changeConfig('enableHTTPS',this,false)" class="htmlSwitch" /><br />
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a>文件分享及相关功能</a>
+				<img id="config_enbaleShare" onclick="changeConfig('enableShare',this)" class="htmlSwitch" /><br />
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a>新用户注册</a>
+				<img id="config_enableRegister" onclick="changeConfig('enableRegister',this)" class="htmlSwitch" /><br />
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a>账户注册需要验证</a>
+				<img id="config_registerVerify" onclick="changeConfig('registerVerify',this)" class="htmlSwitch" /><br />
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a>在线播放</a>
+				<img id="config_enableStreamMedia" onclick="changeConfig('enabledStreamMedia',this)" class="htmlSwitch" /><br />
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a>修改昵称</a>
+				<img id="config_enableNickname" onclick="changeConfig('enableNickName',this)" class="htmlSwitch" /><br />
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a>修改昵称需要审核</a>
+				<img id="config_changeNicknameExamine" onclick="changeConfig('changeNicknameExamine',this)" class="htmlSwitch" /><br />
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a>允许重置密码</a>
+				<img id="config_enableResetPassword" onclick="changeConfig('enableResetPassword',this)" class="htmlSwitch" /><br />
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a>IP每日注册账户数限制</a>
+				<img id="config_limitRegisterEveryday" onclick="changeConfig('limitRegisterEveryday',this)" class="htmlSwitch" /><br />
+			</div>
+		</div>
+		<div id="shareManagerDiv" class="settingDiv" hidden>
+			<h3>管理所有用户的分享</h3>
+			<h4 id="shareListRequingText">请求中</h4>
+			<table id="userShareTable" border="2px" class="table_style">
+				<tr>
+					<td>
+						文件名
+					</td>
+					<td>
+						分享者用户名
+					</td>
+					<td>
+						操作
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div id="accountManagerDiv" class="settingDiv" hidden>
+			<h3>更改现有账户或创建新账户</h3>
+			<button onclick="document.getElementById('newAccountDialog').show()" id="createNewAccountButton">创建新账户</button>
+			<h4 id="accountListRequingText">请求中</h4>
+			<table id="accountTable" border="2px" class="table_style">
+				<tr>
+					<td>
+						昵称
+					</td>
+					<td>
+						用户名
+					</td>
+					<td>
+						操作
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div id="nicknameDiv" class="settingDiv" hidden>
+			<h3>处理用户修改昵称请求</h3>
+			<h4 id="nicknameLoadingText">请求中</h4>
+			<table class="table_style" id="nickname_table" border="2px"></table>
+		</div>
+		<div id="publicFileDiv" class="settingDiv" hidden>
+			<h3>设置公开分享的文件</h3>
+			<input type="file" id="uploadFrom" style="display: none;" onchange="uploadFileFunction()"/>
+			<button id="publicFileUploadButton" onclick="document.getElementById('uploadFrom').click()">上传文件</button>
+			<a href="javascript:void(0)" id="publicFileText" onclick="window.open(`http:\/\/${window.location.hostname}/public.shareList`)">进入公开文件分享区</a>
+			<h5>任何访客均可下载或在线播放</h5>
+			<h4 id="publicFileLoadingText">请求中</h4>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<button onclick="reloadPublicFiles()">重载共享文件</button>
+				<small>用于在服务器直接修改共享文件夹内容(而非本页面)时重置共享文件列表 否则更改无效</small>
+			</div>
+			<table class="table_style" id="publicFilesTable" border="2px"></table>
+		</div>
+		<div id="banipDiv" class="settingDiv" hidden>
+			<h3>管理阻止访问的IP地址</h3>
+			<h4 id="banipLoadingText">请求中</h4>
+			<button id="addBanip" class="button_true" onclick="document.getElementById('addBanipDialog').show()">添加IP</button>
+			<br>
+			<table class="table_style" id="banipTable" border="2px"></table>
+		</div>
+		<div id="logDiv" class="settingDiv" hidden>
+			<h3>查看服务器实时日志</h3>
+			<button id="changeLogPage_disk" class="button_true" onclick="changeLogFrameToDisk()">主日志</button>
+			<button id="changeLogPage_admin" class="button_false" onclick="changeLogFrameToAdmin()">管理员日志</button>
+			<button class="button_true" onclick="setAutoScroll(this)">自动滚动</button>
+			<br />
+			<a id="memInfo">内存信息获取中</a>
+			<iframe src="/serverLogs.wsh" id="logFrame" class="logFrameStyle"></iframe>
+			<iframe src="/serverLogs.wsh" id="logFrameAdmin" class="logFrameStyle" hidden></iframe>
+		</div>
+		<ul class="menu_main">
+			<li>
+				<a href="javascript:void(0)" id="menu_baseInfo" onclick="setMenu(0)" style="color:blue;">控制面板</a>
+				<p></p>
+			</li>
+			<li>
+				<a href="javascript:void(0)" id="menu_shareManager" onclick="setMenu(1)">分享管理</a>
+				<p></p>
+			</li>
+			<li>
+				<a href="javascript:void(0)" id="menu_accountSafe" onclick="setMenu(2)">账户管理</a>
+				<p></p>
+			</li>
+			<li>
+				<a href="javascript:void(0)" id="menu_nickname" onclick="setMenu(3)">昵称审核</a>
+				<p></p>
+			</li>
+			<li>
+				<a href="javascript:void(0)" id="menu_publicFile" onclick="setMenu(4)">共享管理</a>
+				<p></p>
+			</li>
+			<li>
+				<a href="javascript:void(0)" id="menu_banip" onclick="setMenu(5)">IP封禁</a>
+				<p></p>
+			</li>
+			<li>
+				<a href="javascript:void(0)" id="menu_logs" onclick="setMenu(6)">运行日志</a>
+			</li>
+		</ul>
+	</body>
+	<script src="/bgMain.js"></script>
+</html>

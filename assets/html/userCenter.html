@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="private must-revalidate max-age=86400">
+		<meta http-equiv="Expires" content="86400">
+		<link rel="stylesheet" href="/userCenter.cssf" />
+		<title>LOADING</title>
+	</head>
+	<body ondragstart="return false">
+		<a href="javascript:void(0)" class="logout_href" onclick="if(confirm('退出账户?')){logout()}">登出</a>
+		<!-- 修改昵称弹窗 -->
+		<dialog id="nickNameDialog">
+			<h3 style="margin-left: 16%;">输入新昵称</h3>
+			<input type="text" id="changeNickNameInput" autocomplete="off" maxlength="16" />
+			<div style="margin: 3%;">
+				<button style="float: left;border-radius: 8px;background-color: aquamarine;"
+					onclick="changeNickNameClicked()">确定</button>
+				<button style="float: right;background-color: deeppink; border-radius: 8px;"
+					onclick="this.parentNode.parentNode.close()">取消</button>
+			</div>
+		</dialog>
+		<!-- 修改邮箱弹窗 -->
+		<dialog id="emailDialog">
+			<h3 style="margin-left: 16%;">输入新邮箱</h3>
+			<input type="email" id="changeEmailInput" maxlength="48" />
+			<div style="margin: 3%;">
+				<button style="float: left;border-radius: 8px;background-color: aquamarine;"
+					onclick="changeEmailClicked()">确定</button>
+				<button style="float: right;background-color: deeppink; border-radius: 8px;"
+					onclick="this.parentNode.parentNode.close()">取消</button>
+			</div>
+		</dialog>
+		<!-- 修改密码弹窗 -->
+		<dialog id="passwordDialog">
+			<h3 style="margin-left: 16%;">输入新密码</h3>
+			<input type="text" id="changePasswordInput" maxlength="64" autocomplete="off" type="password" autocomplete="off"/>
+			<div style="margin: 3%;">
+				<button style="float: left;border-radius: 8px;background-color: aquamarine;"
+					onclick="changePasswordClicked()">确定</button>
+				<button style="float: right;background-color: deeppink; border-radius: 8px;"
+					onclick="this.parentNode.parentNode.close()">取消</button>
+			</div>
+		</dialog>
+		<!-- 自定义ua弹窗 -->
+		<dialog id="uaDialog">
+			<h3 style="margin-left: 16%;">输入验证用UserAgent</h3>
+			<input type="text" id="uaDetectInput" maxlength="512" />
+			<div style="margin: 3%;">
+				<button style="float: left;border-radius: 8px;background-color: aquamarine;"
+					onclick="setUserAgentConfig(document.getElementById('uaDetectInput').value)">确定</button>
+				<button style="float: right;background-color: deeppink; border-radius: 8px;"
+					onclick="this.parentNode.parentNode.close()">取消</button>
+			</div>
+		</dialog>
+		<div id="mainInfoDiv">
+			<h3>查看及更改账户信息</h3>
+			<a id="userNameText">用户名:载入中</a>
+			<br />
+			<small style="color: darkred;">用户名用于登录网盘 无法对其进行更改</small>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a id="nickNameText">昵称:正在获取</a>
+				<button type="button" style="margin-left: 15px;"
+					onclick="document.getElementById('nickNameDialog').show()">更改</button>
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<small>昵称用于网盘右上角和分享文件时显示 根据管理员后台设置更改可能需要进行审核</small>
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a id="mailText">邮箱:正在获取</a>
+				<button type="button" style="margin-left: 15px;"
+					onclick="document.getElementById('emailDialog').show()">更改邮箱</button>
+			</div>
+			<small>邮箱用于找回密码</small>
+		</div>
+		<div id="shareManagerDiv" hidden>
+			<h3>管理您的文件分享</h3>
+			<h4>所有已分享文件</h4>
+			<h5 id="sharesLoadingText">获取中</h5>
+			<table id="sharedFileListTable" border="2px">
+				<tr></tr>
+			</table>
+		</div>
+		<div id="accountSafeDiv" hidden>
+			<h3>账户安全及密码</h3>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a href="javascript:window.open('https://www.dute.org/password-generator','',{width:64,height:64})"
+					style="text-decoration: none;color: green;">你可以设置长达64位的密码(↲强密码生成器)</a>
+				<button id="changePasswordButton" style="margin-left: 1%;"
+					onclick="document.getElementById('passwordDialog').show()">修改登录密码</button>
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a>UserAgent验证</a>
+				<img id="uaDetectSwitch" onclick="uaDetectSwitch(this)"
+					style="width: 64px;height: 26px;padding-left: 1%;" />
+			</div>
+			<small style="color: darkturquoise;">UserAgent会随使用的浏览器及其版本 平台(Windows Linux Android IOS等)及其系统版本而有所不同</small>
+			<br />
+			<small style="color: darkturquoise;">甚至可在部分浏览器中自行修改</small>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a>通过验证所需的UserAgent:</a>
+				<a id="detectUA">载入中</a>
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<button type="button"
+					onclick="setUserAgentConfig(navigator.userAgent)">设置当前UserAgent为验证用UserAgent</button>
+				<button type="button" style="margin-left: 2%;"
+					onclick="document.getElementById('uaDialog').show()">自定义验证用UserAgent字符串</button>
+				<a style="margin-left: 2%;">UserAgent验证失败时提示:</a>
+				<select id="onUAdetectFailedAlert" onchange="onUAdetectFailedFunction(this)">
+					<option value="uaFailed">UserAgent验证失败</option>
+					<option value="passwordError">用户名或密码错误</option>
+				</select>
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a>当前UserAgent:</a>
+				<a id="navigatorUA" style="color: coral;">获取中</a>
+			</div>
+		</div>
+		<div id="otherFunctionDiv" hidden>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a style="color: burlywood;">包含下载 上传 删除 修改设置等记录</a>
+				<button type="button" style="margin-left: 2%;" onclick="dumpLogs_download()">导出操作日志</button>
+			</div>
+			<a href="javascript:openAbout()" style="color: cornflowerblue;">关于网站</a>
+			<br />
+			<a>如您需将此账户信息彻底清除,</a>
+			<a href="javascript:void(0)" style="color: red;" onclick="window.open('/destroyAccount.thxWel','destAcc',`height=${window.screen.width/1.5},width=${window.screen.width/1.5},left=${(window.screen.width-(window.screen.width/1.5))/2},top=0`)">请点此申请注销</a>
+			<br>
+			<a href="javascript:void(0)" style="color: cadetblue;" onclick="window.open('/openSource.list','os',`height=${window.screen.width/1.5},width=${window.screen.width/1.5},left=${(window.screen.width-(window.screen.width/1.5))/2},top=0`)">开放源代码许可</a>
+		</div>
+		<ul class="menu_main">
+			<li>
+				<a href="javascript:void(0)" id="menu_baseInfo" onclick="setMenu(0)" style="color:blue;">账户信息</a>
+				<p></p>
+			</li>
+			<li>
+				<a href="javascript:void(0)" id="menu_shareManager" onclick="setMenu(1)">分享管理</a>
+				<p></p>
+			</li>
+			<li>
+				<a href="javascript:void(0)" id="menu_accountSafe" onclick="setMenu(2)">安全设置</a>
+				<p></p>
+			</li>
+			<li>
+				<a href="javascript:void(0)" id="menu_other" onclick="setMenu(3)">其他功能</a>
+			</li>
+		</ul>
+	</body>
+	<script src="/userCenter.js"></script>
+</html>

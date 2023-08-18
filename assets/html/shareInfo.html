@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="private must-revalidate max-age=86400">
+		<meta http-equiv="Expires" content="86400">
+		<title>Waiting invoke method</title>
+	</head>
+	<body>
+		<h3 id="fileNameTitle">获取中</h3>
+		<a id="sharerText">分享者:获取中</a>
+		<br />
+		<a id="fileSizeText">文件大小:获取中</a>
+		<br />
+		<a href="javascript:downloadFile()">下载此文件</a>
+	</body>
+	<style></style>
+	<script>
+		let shareId;
+		const antiRefresh=setTimeout(()=>{
+			window.close();
+		},1050)
+		async function init(id){
+			clearTimeout(antiRefresh);
+			document.title="Loading...";
+			shareId=id;
+			const fileInfo=await (await fetch(`/?action=getShareInfo&file=${id.toString()}`)).json();
+			if(fileInfo.statu===404){
+				alert("分享不存在");
+				window.close();
+				return
+			}else if(fileInfo.statu===403){
+				alert("管理员已停用分享相关功能");
+				window.close();
+				return
+			}
+			document.getElementById("fileNameTitle").innerText=`文件:${fileInfo.name}`;
+			document.title=`下载文件:${fileInfo.name}`;
+			document.getElementById("sharerText").innerText=`分享者:${fileInfo.sharer}`;
+			document.getElementById("fileSizeText").innerText=`文件大小:${byte2Mb(fileInfo.size).toString()}MB`
+			
+		}
+		async function downloadFile(){
+			window.location.href=`/?action=downlaodShare&id=${shareId}`;
+		}
+		function byte2Mb(bytes) {
+			return parseFloat((bytes / 1024 / 1024).toFixed(2));
+		}
+	</script>
+</html>

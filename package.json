@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "cookie": "^0.5.0",
+    "fs-extra": "^11.1.1",
+    "nodemailer": "^6.9.3",
+    "randomthing-js": "^2.0.1",
+    "ws": "^8.13.0"
+  },
+  "devDependencies": {
+    "@types/cookie": "^0.5.1",
+    "@types/nodemailer": "^6.4.8",
+    "@types/ws": "^8.5.5"
+  }
+}

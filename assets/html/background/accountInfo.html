@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="private must-revalidate max-age=86400">
+		<meta http-equiv="Expires" content="86400">
+		<title>Loading</title>
+	</head>
+	<body ondragstart="return false">
+		<h2>查看与修改账户信息</h2>
+		<dialog id="nickNameDialog" class="dialogs">
+			<h3 style="margin-left: 16%;">输入新昵称</h3>
+			<input type="text" id="changeNickNameInput" autocomplete="off" maxlength="16" onkeydown="enterEvent(event,'nickName',document.getElementById('changeNickNameInput').value.toString(),this.parentNode)"/>
+			<div style="margin: 3%;">
+				<button style="float: left;border-radius: 8px;background-color: aquamarine;"
+					onclick="editUserInfo('nickName',document.getElementById('changeNickNameInput').value.toString(),this.parentNode.parentNode)">确定</button>
+				<button style="float: right;background-color: deeppink; border-radius: 8px;"
+					onclick="this.parentNode.parentNode.close()">取消</button>
+			</div>
+		</dialog>
+		<dialog id="emailDialog" class="dialogs">
+			<h3 style="margin-left: 16%;">输入新邮箱</h3>
+			<input type="text" id="changeEmailInput" autocomplete="off" maxlength="48" onkeydown="enterEvent(event,'email',document.getElementById('changeEmailInput').value.toString(),this.parentNode)"/>
+			<div style="margin: 3%;">
+				<button style="float: left;border-radius: 8px;background-color: aquamarine;"
+					onclick="editUserInfo('email',document.getElementById('changeEmailInput').value.toString(),this.parentNode.parentNode)">确定</button>
+				<button style="float: right;background-color: deeppink; border-radius: 8px;"
+					onclick="this.parentNode.parentNode.close()">取消</button>
+			</div>
+		</dialog>
+		<dialog id="passwordDialog" class="dialogs">
+			<h3 style="margin-left: 16%;">输入新密码</h3>
+			<input type="text" id="changePasswordInput" autocomplete="off" maxlength="64" onkeydown="enterEvent(event,'password',document.getElementById('changePasswordInput').value.toString(),this.parentNode)"/>
+			<div style="margin: 3%;">
+				<button style="float: left;border-radius: 8px;background-color: aquamarine;"
+					onclick="editUserInfo('password',document.getElementById('changePasswordInput').value.toString(),this.parentNode.parentNode)">确定</button>
+				<button style="float: right;background-color: deeppink; border-radius: 8px;"
+					onclick="this.parentNode.parentNode.close()">取消</button>
+			</div>
+		</dialog>
+		<dialog id="storageDialog" class="dialogs">
+			<h3 style="margin-left: 16%;">设置用户存储空间(MB)</h3>
+			<input type="number" id="storageInput" autocomplete="off" maxlength="6" onkeydown="((event)=>{if(event.key==='Enter') setUserStorage()})(event)"/>
+			<div style="margin: 3%;">
+				<button style="float: left;border-radius: 8px;background-color: aquamarine;"
+					onclick="setUserStorage()">确定</button>
+				<button style="float: right;background-color: deeppink; border-radius: 8px;"
+					onclick="this.parentNode.parentNode.close()">取消</button>
+			</div>
+		</dialog>
+		<dialog id="uaDialog" class="dialogs">
+			<h3 style="margin-left: 16%;">设置用户登录验证UA</h3>
+			<input type="text" id="uaInput" autocomplete="off" maxlength="512" onkeydown="enterEvent(event,'ua',document.getElementById('uaInput').value.toString(),this.parentNode)"/>
+			<div style="margin: 3%;">
+				<button style="float: left;border-radius: 8px;background-color: aquamarine;"
+					onclick="editUserInfo('ua',document.getElementById('uaInput').value.toString(),this.parentNode.parentNode)">确定</button>
+				<button style="float: right;background-color: deeppink; border-radius: 8px;"
+					onclick="this.parentNode.parentNode.close()">取消</button>
+			</div>
+		</dialog>
+		<div style="display: flex;margin-top: 3%;flex-direction: column;">
+			<div style="display: flex;flex-direction: row;">
+				用户名:
+				<a id="text_userName">Loading</a>
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 10px;">
+				昵称:
+				<a id="text_nickName">Loading</a>
+				<button type="button" onclick="document.getElementById('nickNameDialog').show()"
+					class="setAccountConfigButton">更改</button>
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 10px;">
+				邮箱:
+				<a id="text_email">Loading</a>
+				<button type="button" onclick="document.getElementById('emailDialog').show()"
+					class="setAccountConfigButton">更改</button>
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 10px;">
+				密码:
+				<button type="button" id="passwordAlertButton" class="setAccountConfigButton" onclick="alert(alertPassword.toString())" disabled>查看</button>
+				<button type="button" onclick="document.getElementById('passwordDialog').show()"
+					class="setAccountConfigButton">更改</button>
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 10px;">
+				存储空间:
+				<a id="text_storage">Loading</a>
+				<button type="button" onclick="document.getElementById('storageDialog').show()"
+					class="setAccountConfigButton">更改</button>
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 10px;">
+				验证用UA:
+				<button type="button" class="setAccountConfigButton" onclick="alert(alertUa)" id="uaAlertButton" disabled>查看</button>
+				<button type="button" onclick="document.getElementById('uaDialog').show()"
+					class="setAccountConfigButton">更改</button>
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a>登录时UA检测</a>
+				<img id="account_uaDetectEnable" onclick="uaDetectEnableSwitch(!this.checked)" class="htmlSwitch"/><br/>
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a>允许分享文件</a>
+				<img id="account_enableShare" onclick="enableShareSwitch(!this.checked)" class="htmlSwitch"/><br/>
+			</div>
+			<div style="display: flex;flex-direction: row;margin-top: 1%;">
+				<a>UA检测失败提醒</a>
+				<select onchange="onAccountUaDetectFailed(this)" id="select_onUaDetectFailed" disabled>
+					<option value="ua">UserAgent验证失败</option>
+					<option value="password">用户名或密码错误</option>
+				</select>
+			</div>
+			<br />
+		</div>
+		<h3>账户操作</h3>
+		<button type="button" id="setAccountEnabledButton" onclick="switchEnabled(this.innerText=='启用')" disabled>Loading</button>
+		<button type="button" id="resetLoginToken" onclick="resetAccountToken()" disabled>重置登录Token(登出)</button>
+	</body>
+	<style>
+		.dialogs {
+			position: absolute;
+			border-radius: 15px;
+			top: 30%;
+		}
+		.htmlSwitch{
+			width: 64px;
+			height: 24px;
+			padding-left: 1%;
+		}
+		.setAccountConfigButton {
+			background-color: lawngreen;
+			margin-left: 3%;
+			border: 1px;
+			border-radius: 3px;
+		}
+		.setAccountConfigButton:hover{
+			background-color: greenyellow;
+		}
+		#setAccountEnabledButton {
+			background-color: hotpink;
+			margin-left: 3%;
+			border: 1px;
+			border-radius: 3px;
+		}
+
+		#setAccountEnabledButton:hover {
+			background-color: lightpink;
+		}
+		#resetLoginToken{
+			background-color: rebeccapurple;
+			margin-left: 3%;
+			border: 1px;
+			border-radius: 3px;
+		}
+		#resetLoginToken:hover{
+			background-color: mediumpurple;
+		}
+	</style>
+	<script>
+		let initAccount,htmlButtonTrue=null, htmlButtonFalse=null,alertPassword,alertUa,accountInfo;
+		const antiRefresh = setTimeout(() => { //防止刷新
+			window.close();
+		}, 750);
+		const htmlSwitchElem=[document.getElementById("account_uaDetectEnable"),document.getElementById("account_enableShare")];
+		async function init(account,socket=null) { //初始化
+			initAccount = account;
+			clearTimeout(antiRefresh);
+			if (location.protocol.toLowerCase()==="https:"&&socket!==null) {//如果使用https
+				socket.send(JSON.stringify({action:"GETACCOUNTINFO",data:account}));
+			} else {//否则直接请求
+				accountInfo = await (await fetch("/", {
+					credentials: 'include',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					method: "POST",
+					body: JSON.stringify({
+						action: "GETACCOUNTINFO",
+						account: account
+					})
+				})).json();
+			}
+			if (socket===null) {//好像是不能return?
+				if (htmlButtonFalse===null) {
+					htmlButtonFalse = window.URL.createObjectURL((await (await fetch("bitmap_html_switch_false.bitmap", {
+						responseType: "blob"
+					})).blob()));
+					htmlButtonTrue = window.URL.createObjectURL((await (await fetch("bitmap_html_switch_true.bitmap", {
+						responseType: "blob"
+					})).blob()));
+				}
+				if (accountInfo.accountNotFound) {
+					alert("账户不存在");
+					window.close();
+				}
+				const switchState=[accountInfo.uaDetectEnable,accountInfo.enableShare];
+				for (let elem in htmlSwitchElem) {
+					htmlSwitchElem[elem].src = switchState[elem] ? htmlButtonTrue : htmlButtonFalse;
+					htmlSwitchElem[elem].checked = switchState[elem];
+				}
+				document.title = `账户配置:${account}`;
+				document.getElementById("text_userName").innerText = account;
+				alertPassword=accountInfo.password;
+				initText(accountInfo);
+				initButton(accountInfo);
+			}
+		}
+		async function socketDataCallback(data){
+			if (data.accountNotFound) {
+				alert("账户不存在");
+				window.close();
+			}
+			if (htmlButtonFalse===null) {
+				htmlButtonFalse = window.URL.createObjectURL((await (await fetch("bitmap_html_switch_false.bitmap", {
+					responseType: "blob"
+				})).blob()));
+				htmlButtonTrue = window.URL.createObjectURL((await (await fetch("bitmap_html_switch_true.bitmap", {
+					responseType: "blob"
+				})).blob()));
+			}
+			const switchState=[data.uaDetectEnable,data.enableShare];
+			for (let elem in htmlSwitchElem) {
+				htmlSwitchElem[elem].src = switchState[elem] ? htmlButtonTrue : htmlButtonFalse;
+				htmlSwitchElem[elem].checked = switchState[elem];
+			}
+			document.title = `账户配置:${initAccount}`;
+			document.getElementById("text_userName").innerText = initAccount;
+			alertPassword=data.password;
+			initText(data);
+			initButton(data);
+		}
+		function initText(info) {
+			document.getElementById("text_nickName").innerText = info.nickName;
+			document.getElementById("text_email").innerText = info.email;
+			document.getElementById("passwordAlertButton").disabled = false;//有xss风险 弹窗查看
+			document.getElementById("text_storage").innerText = `${info.storage}MB`;
+			// document.getElementById("text_uaString").innerText=info.ua.length<=0?"用户未设定":info.ua;
+			document.getElementById("uaAlertButton").disabled=false;//同上
+			alertUa=info.ua.length<=0?"用户未设定":info.ua;
+		}
+
+		function initButton(info) {
+			const accountEnabledButton = document.getElementById("setAccountEnabledButton");
+			accountEnabledButton.disabled = false;
+			document.getElementById("resetLoginToken").disabled=false;
+			accountEnabledButton.innerText = info.enabled ? "停用" : "启用";
+			document.getElementById("select_onUaDetectFailed").selectedIndex=info.onUserAgentDetectFailed==="password"?1:0;
+			document.getElementById("select_onUaDetectFailed").disabled=false;
+		}
+		function swapHtmlSwitchState(elem){
+			elem.checked = !elem.checked
+			elem.src = elem.checked ? htmlButtonTrue : htmlButtonFalse;
+		}
+		async function switchEnabled(enable){
+			if(!confirm(`确认${enable?"启用":"停用"}此账户?`)) return
+			editUserInfo("enabled",enable,)
+		}
+		async function resetAccountToken(){
+			if(!confirm("该账户登录将会失效\n是否继续")) return
+			await fetch("/",{credentials:'include',headers:{'Content-Type': 'application/json'},method:"POST",body:JSON.stringify({action:"RESETUSERACCOUNTTOKEN",account:initAccount})});
+			alert("已执行");
+		}
+		async function uaDetectEnableSwitch(enable){
+			await editUserInfo("uaDetectEnable",enable);
+			swapHtmlSwitchState(document.getElementById("account_uaDetectEnable"));
+		}
+		async function enableShareSwitch(enable){
+			await editUserInfo("enableShare",enable);
+			swapHtmlSwitchState(document.getElementById("account_enableShare"));
+		}
+		async function onAccountUaDetectFailed(select){
+			await editUserInfo("onUserAgentDetectFailed",select.options[select.selectedIndex].value);
+		}
+		function setUserStorage() {
+			const value = parseInt(document.getElementById("storageInput").value);
+			if (value == NaN || value <= 0) {
+				alert("非有效数字");
+				return
+			}
+			editUserInfo("storage", value, document.getElementById("storageDialog"))
+		}
+		function enterEvent(event,key,value,dialog){
+			if (event.key==="Enter") editUserInfo(key,value,dialog);
+		}
+		async function editUserInfo(key, value, dialogElement=null) {
+			await (await fetch("/", {
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				method: "POST",
+				body: JSON.stringify({
+					action: "SETACCOUNTINFO",
+					key: key,
+					value: value,
+					account: initAccount
+				})
+			}));
+			init(initAccount);//刷新数据
+			alert("已执行");
+			if(dialogElement!==null) dialogElement.close();//关闭对话框
+		}
+	</script>
+</html>

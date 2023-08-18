@@ -1,0 +1,137 @@
+#accountText {
+    float: right;
+    margin-right: 5%;
+    margin-top: 0%;
+    text-decoration: none;
+    color: darkorchid;
+}
+#accountText:hover{
+    color: yellowgreen;
+}
+.dialog{
+    position: absolute;
+    border-radius: 15px;
+    top: 50%;
+}
+#storageProgress {
+    margin-top: 5%;
+    margin-left: 2%;
+}
+#storageText {
+    margin-top: 5%;
+    margin-left: 6%;
+}
+
+#logout {
+    float: right;
+    margin-right: 1%;
+    margin-top: 0%;
+    color: red;
+}
+#logout:hover{
+    color: #234223;
+}
+#fileTable {
+    width: 90%;
+    margin-left: 5%;
+    border-radius: 8px;
+}
+
+#uploadActionText {
+    margin-top: 4%;
+    margin-right: 2%;
+    float: right;
+}
+
+#fileTable td {
+    line-height: 20px;
+    width: 24%;
+    border: 0px;
+}
+.uploadButton:hover{
+    background-color: #a0e6e6;
+}
+.uploadButton {
+    background-color: #72E1E1;
+    border-radius: 32px;
+    width: 100px;
+    height: 40px;
+    margin-top: 3%;
+    margin-right: 0%;
+    float: right;
+}
+.shareCodeInputButton{
+    background-color: #00aa00;
+    border-radius: 32px;
+    width: 100px;
+    height: 40px;
+    margin-top: 3%;
+    margin-right: 0%;
+    float: right;
+}
+.shareCodeInputButton:hover{
+    background-color: #0ace0a;
+}
+.shareFileButton{
+    background-color: darkseagreen;
+    border-radius: 3px;
+    margin-left: 16px;
+}
+.shareFileButton:hover{
+    background-color: rgb(137, 197, 137);
+}
+.delete {
+    background-color: #F34D4D;
+    border-radius: 3px;
+    margin-left: 16px;
+}
+.delete:hover{
+    background-color: rgb(243, 130, 17);
+}
+.renameButton{
+    background-color: #3581cd;
+    border-radius: 3px;
+    margin-left: 16px;
+}
+.renameButton:hover{
+    background-color: rgb(104, 149, 232);
+}
+.playMedia {
+    background-color: #AB5FF1;
+    border-radius: 3px;
+    margin-left: 16px;
+}
+.playMedia:hover{
+    background-color: #892ce0;
+}
+#fileTable tr {
+    line-height: 24px;
+}
+#fileProgress {
+    margin-top: 4%;
+    margin-right: 2%;
+    float: right;
+}
+
+#fileTable a {
+    text-decoration: none;
+}
+#fileTable a:hover{
+    color: goldenrod;
+}
+
+#storageText {
+    text-decoration: none;
+    color: black;
+}
+#storageText:hover{
+    color: darkgray;
+}
+#publicFileText{
+    text-decoration: none;
+    color: green;
+    margin-left: 2%;
+}
+#publicFileText:hover{
+    color: greenyellow;
+}

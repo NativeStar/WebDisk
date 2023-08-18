@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="private must-revalidate max-age=86400">
+		<meta http-equiv="Expires" content="86400">
+		<link rel="stylesheet" href="./main.disk.cs" />
+		<title>加载中</title>
+	</head>
+	<body style="position: relative;" ondragstart="return false">
+		<a href="javascript:void(0)" id="logout" onClick="logout()">登出</a>
+		<a id="accountText" href="/userCenter.settings">你好:userNickName</a>
+		<div>
+			<button type="button" class="shareCodeInputButton"
+				onclick="document.getElementById('shareCodeDialog').show()" style="margin-left: 16px;">获取分享</button>
+			<button type="button" class="uploadButton"
+				onclick="javascript:document.getElementById('uploadFrom').click()">上传文件</button>
+			<input type="file" id="uploadFrom" style="display: none;" onchange="uploadFileFunction()" />
+		</div>
+		<dialog id="renameDialog" class="dialog">
+			<h3 style="margin-left: 16%;">输入新文件名</h3>
+			<input type="text" id="inputBoxElem" autocomplete="off" />
+			<div style="margin: 3%;">
+				<button style="float: left;border-radius: 8px;background-color: aquamarine;"
+					id="renameSubmit">确定</button>
+				<button style="float: right;background-color: deeppink; border-radius: 8px;"
+					onclick="this.parentNode.parentNode.close()">取消</button>
+			</div>
+		</dialog>
+		<dialog id="shareDialog" class="dialog">
+			<h3 style="margin-left: 16%;">设置分享期限</h3>
+			<select id="shareFileExpireSelect" style="width:-webkit-fill-available;">
+				<option value="0">无限期</option>
+				<option value="1">1天</option>
+				<option value="7">7天</option>
+				<option value="30">30天</option>
+			</select>
+			<br />
+			<small>可随时前往个人中心取消分享</small>
+			<div style="margin: 3%;">
+				<button style="float: left;border-radius: 8px;background-color: aquamarine;"
+					onclick="shareFile(this.parentElement.parentElement.__proto__.rawElement)">确定</button>
+				<button style="float: right;background-color: deeppink; border-radius: 8px;"
+					onclick="this.parentNode.parentNode.close()">取消</button>
+			</div>
+		</dialog>
+		<dialog id="shareCodeDialog" class="dialog">
+			<h3 style="margin-left: 16%;">输入分享码</h3>
+			<input type="text" id="shareCodeInput" autocomplete="off" maxlength="32" />
+			<div style="margin: 3%;">
+				<button style="float: left;border-radius: 8px;background-color: aquamarine;"
+					onclick="reqShareCode()">确定</button>
+				<button style="float: right;background-color: deeppink; border-radius: 8px;"
+					onclick="this.parentNode.parentNode.close()">取消</button>
+			</div>
+		</dialog>
+		<a id="storageText" href="javascript:showBytesUsage()">正在统计...</a>
+		<progress value="0" id="storageProgress"></progress>
+		<progress value="0" max="1024" id="fileProgress" style="display: none;"></progress>
+		<a href="javascript:void(0)" id="publicFileText" onclick="window.open('/public.shareList')">公开文件分享区</a>
+		<h5 id="uploadActionText" style="display: none;">读取中...</h5>
+		<table id="fileTable" border="2px"></table>
+	</body>
+	<script src="/main.disk.j"></script>
+</html>

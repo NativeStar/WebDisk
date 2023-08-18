@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Cache-Control" content="private must-revalidate max-age=86400">
+	<meta http-equiv="Expires" content="86400">
+	<title>Waiting invoke method</title>
+</head>
+
+<body>
+	<img id="pic" width="280px" height="280px" onclick="showAudioMetadata()" hidden>
+	<a id="noPictureText" hidden onclick="showAudioMetadata()">无封面</a>
+	<br>
+	<audio id="audioPlayer" controls style="display: none;"></audio>
+	<video id="videoPlayer" controls style="display: none;width: 100%;height: 100%;"></video>
+</body>
+<script>
+	let mediaBlob, mediaMetadata;
+	//刷新会导致初始化不被调用 要阻止刷新 1.05秒内不调用初始化就关闭窗口
+	const antiRefresh = setTimeout(() => {
+		window.close()
+	}, 1050)
+	document.title = "Loading...";
+	const audioPlayer = document.getElementById("audioPlayer");
+	const videoPlayer = document.getElementById("videoPlayer");
+	async function initMedia(name, type, isPublic = false) {
+		clearTimeout(antiRefresh); //正常情况下清除定时器绰绰有余
+		let media;
+		document.title = `MediaPlayer(${type}):${name}`;
+		try {
+			if (!isPublic) {
+				media = await fetch(`/?action=streamMedia&name=${name}`, { credentials: "include", responseType: "blob" });
+			} else {
+				media = await fetch(`/?action=publicStreamMedia&name=${name}`, { responseType: "blob" });
+			}
+			if (media.status === 400) {
+				alert("管理员已停用流媒体播放功能");
+				window.close();
+				return
+			}
+			mediaBlob = await media.blob();
+			media = null;//释放
+		} catch (e) { }
+		if (type === "AUDIO") {
+			audioPlayer.style = "display:inline;";
+			audioPlayer.src = window.URL.createObjectURL(mediaBlob);
+			initAudioMetadataReader(mediaBlob);
+		} else {
+			videoPlayer.style = "display: inline;width: 100%;height: 100%;";
+			videoPlayer.src = window.URL.createObjectURL(mediaBlob);
+		}
+	}
+	function initAudioMetadataReader() {
+		const readerElement = document.createElement("script");
+		readerElement.setAttribute("src", "/audioMetadata.reader");
+		readerElement.setAttribute("onload", "onMetadataReaderLoaded()");
+		document.body.appendChild(readerElement);
+	}
+	function onMetadataReaderLoaded() {
+		jsmediatags.read(mediaBlob, {
+			onSuccess: metadata => {
+				console.log(metadata);
+				mediaMetadata = metadata.tags;
+				if (metadata.tags.picture != null) {
+					const { data, format } = metadata.tags.picture;
+					let base64String = "";
+					for (let i = 0; i < data.length; i++) {
+						base64String += String.fromCharCode(data[i]);
+					}
+					document.getElementById("pic").hidden=false;
+					document.getElementById("pic").src = `data:${data.format};base64,${window.btoa(base64String)}`;
+				} else {
+					document.getElementById("noPictureText").hidden = false;
+				}
+			},
+			onError: err => {
+				console.log(err);
+			}
+		})
+	}
+	function showAudioMetadata(){
+		const oldWidth=window.outerWidth;
+		const oldHeight=window.outerHeight;
+		window.resizeTo(oldWidth*2,oldHeight*2);
+		alert(`以下信息获取自音频文件内嵌元数据\n标题:${mediaMetadata.title||"未知"}\n专辑:${mediaMetadata.album||"未知"}\n艺术家:${mediaMetadata.artist||"未知"}`);
+		window.resizeTo(oldWidth,oldHeight);
+	}
+</script>
+
+</html>

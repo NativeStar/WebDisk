@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>注册新账户</title>
+	</head>
+	<body>
+		<h2 class="title">注册</h2>
+		<input type="text" placeholder="用户名" style="margin-top: 2" id="textInput" maxlength="16"/>
+		<input type="password" placeholder="密码" style="margin-top: 2%" id="passwordInput" maxlength="64"/>
+		<input type="password" placeholder="确认密码" style="margin-top: 2%" id="passwordInputRep" maxlength="64"/>
+		<input type="email" placeholder="邮箱" style="margin-top: 2%" id="emailInput" maxlength="48"/>
+		<small style="color: gray;margin-top: 1%;">邮箱用于找回密码及注册验证</small>
+		<div style="display: flex;flex-direction: row;margin-top: 10px;">
+			<input type="text" placeholder="验证码" style="margin-top: 2%;width: 70px;" maxlength="6" id="verifyInput"/>
+			<button id="verifyButton" onclick="sendVerifyCode()">发送验证</button>
+		</div>
+		<button type="button" id="submitButton" onclick="submitReg()">注册</button>
+	</body>
+	<style>
+		body{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		.title{
+			margin-top: 8%;
+		}
+		#submitButton{
+			margin-top: 2%;
+			width: 12%;
+			background-color: aquamarine;
+		}
+		#submitButton:hover{
+			background-color: chartreuse;
+		}
+		#verifyButton{
+			height: 8%;
+			margin-top: 3px;
+			background-color: cornflowerblue;
+		}
+		#verifyButton:hover{
+			background-color: lightblue;
+		}
+	</style>
+	<script>
+		const verifyButtonView=document.getElementById("verifyButton");
+		let verifyTimer;
+		let time=300;
+		const emailReg = new RegExp("^[a-zA-Z0-9]+([-_.][A-Za-zd]+)*@([a-zA-Z0-9]+[-.])+[A-Za-zd]{2,5}$");
+		const wordFilter=new RegExp("^[0-9a-zA-Z]+$");
+		document.getElementById("verifyInput").onkeydown = (key) => {
+			if (key.keyCode === 13) { //回车
+				submitReg();
+			}
+		}
+		async function submitReg(){
+			let creActReq;
+			const regButton=document.getElementById("submitButton");
+			const [accountValue,passwordValue,emailValue,verifyValue]=[document.getElementById("textInput").value.toString(),document.getElementById("passwordInput").value.toString(),document.getElementById("emailInput").value.toString(),document.getElementById("verifyInput").value.toString()];
+			// 判断是否都完成填写
+			/* 长度限制 后端也要
+				账号:16 
+				密码:64
+				邮箱:48
+				验证码:6*/
+			if(passwordValue!==document.getElementById("passwordInputRep").value.toString()){
+				alert("两次输入密码不一致");
+				return
+			}
+			if([accountValue,passwordValue,emailValue].some(value=>{return value.length<=3})){
+				alert("请正确填写:输入内容过短");
+				return
+			}
+			//验证码
+			if(verifyValue.length!==6){
+				alert("验证码错误");
+				return
+			}
+			//输入内容过滤 只允许字母和数字
+			if([accountValue,passwordValue].some(value=>{return !wordFilter.test(value)})){
+				alert("请正确填写:只允许输入大小写字母和数字");
+				return
+			}
+			if(accountValue.length>16||passwordValue.length>64||emailValue.length>48){
+				alert("数据长度异常");
+				return
+			}
+			if(!emailReg.test(emailValue)){
+				alert("邮箱格式不正确");
+				return
+			}
+			regButton.disabled=true;
+			regButton.innerText="请求中";
+			try{
+				creActReq=await (await fetch(`/?action=reg&account=${accountValue}&email=${emailValue}&password=${passwordValue}&verify=${verifyValue}`,{credentials:"include"})).json();
+			}catch(e){
+				alert("发送请求失败\n这可能是网络或服务器问题");
+				regButton.disabled=false;
+				regButton.innerText="注册";
+				return
+			}
+			switch(creActReq.code){
+				case 200:
+					alert("注册成功");
+					window.location.href="/"
+					break
+				case 101:
+					//输入长度
+					alert("注册失败:输入数据长度异常");
+					break
+				case 102:
+					//邮箱
+					alert("注册失败:邮箱校验未通过");
+					break
+				case 103:
+					//账号已被注册
+					alert("注册失败:该用户名已被注册\n请更换");
+					break
+				case 104:
+					//含有不合规字符
+					alert("注册失败:含有不合规字符\n只允许大小写字母和数字");
+					break
+				case 105:
+					//用户名有屏蔽词
+					alert("注册失败:用户名包含屏蔽词\n请修改");
+					break
+				case 106:
+					//注册功能被关闭
+					alert("管理员已停用账户注册功能");
+					window.location.href="/"
+					break
+				case 107:
+					// Windows保留字
+					alert("不允许注册此用户名");
+					break
+				case 108:
+					alert("验证码错误");
+					break
+				case 109:
+					alert("当前IP每日注册账户数已达限制");
+					break
+				case 300:
+					//请求被忽略 不应该出现 可能删掉
+					alert("未知异常");
+					break
+			}
+			regButton.disabled=false;
+			regButton.innerText="注册";
+		}
+		async function sendVerifyCode(){
+			const emailValue=document.getElementById("emailInput").value.toString();
+			if(!emailReg.test(emailValue)){
+				alert("邮箱格式不正确");
+				return
+			}
+			verifyButtonView.disabled=true;
+			verifyButtonView.innerText="发送中...";
+			try{
+				const codeRespone=await (await fetch(`/?action=sendRegisterVerify&email=${emailValue}`)).json();
+				switch(codeRespone.code){
+					case 200:
+						document.getElementById("emailInput").disabled=true;
+						alert("已发送 请留意邮箱\n(如未接收到请查看垃圾箱)");
+						time=300;
+						verifyTimer=setInterval(()=>{
+							time-=1;
+							verifyButtonView.innerText=`重新获取(${time})`;
+							if(time<=0){
+								verifyButtonView.disabled=false;
+								verifyButtonView.innerText="发送验证";
+								clearInterval(verifyTimer);
+								verifyTimer=null;
+							}
+						},1000)
+						break
+					case 106:
+						alert("管理员已停用账户注册功能");
+						verifyButtonView.innerText="无法注册";
+						window.location.href="/";
+						return
+					case 403:
+						alert("错误:请求被拒绝");
+						verifyButtonView.disabled=false;
+						verifyButtonView.innerText="发送验证";
+						return
+					case 300://漏参数
+						alert("请求被忽略 可能原因有:\n1.网络异常\n2.服务端Bug");
+						verifyButtonView.disabled=false;
+						verifyButtonView.innerText="发送验证";
+						return
+					case 600:
+						alert("发送失败:该邮箱已被使用");
+						verifyButtonView.disabled=false;
+						verifyButtonView.innerText="发送验证";
+						return
+					case 601:
+						alert("请求过于频繁 稍后重试");
+						verifyButtonView.disabled=false;
+						verifyButtonView.innerText="发送验证";
+						return
+					case 602:
+						alert("当日验证码次数达到上限");
+						verifyButtonView.disabled=false;
+						verifyButtonView.innerText="发送验证";
+						return
+					case 604:
+						alert("服务端错误:发送邮件时发生异常");
+						verifyButtonView.disabled=false;
+						verifyButtonView.innerText="发送验证";
+						return
+					case 605:
+						alert("服务端错误:未进行正确的发件配置");
+						verifyButtonView.disabled=false;
+						verifyButtonView.innerText="发送验证";
+						return
+					default:
+						alert("错误:未知返回");
+						verifyButtonView.disabled=false;
+						verifyButtonView.innerText="发送验证";
+						return
+				}
+				
+			}catch(e){
+				alert("发送验证码时发生异常 请稍后重试或联系管理员");
+				return
+			}
+		}
+	</script>
+</html>

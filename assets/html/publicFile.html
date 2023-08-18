@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="private must-revalidate max-age=86400">
+		<meta http-equiv="Expires" content="86400">
+		<title>管理员提供的公开文件</title>
+	</head>
+	<body ondragstart="return false">
+		<h3>公开下载的文件</h3>
+		<p>此处的所有文件均由网站管理员分享</p>
+		<table id="mainTable" border="2px">
+			<tbody>
+				<tr>
+					<td>文件名<hr/></td>
+					<td>大小<hr/></td>
+					<td>操作<hr/></td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+	<style>
+		#mainTable {
+			width: 90%;
+			margin-left: 5%;
+			border-radius: 8px;
+		}
+
+		#mainTable td {
+			line-height: 20px;
+			width: 24%;
+			border: 0px;
+		}
+		#mainTable tr{
+			line-height: 24px;
+		}
+		#mainTable a {
+		    text-decoration: none;
+		}
+		#mainTable a:hover{
+		    color: goldenrod;
+		}
+		.playMedia{
+			background-color: deepskyblue;
+			margin-left: 3%;
+			border: 1px;
+			border-radius: 3px;
+		}
+		.playMedia:hover{
+			background-color: skyblue;
+		}
+	</style>
+	<script>
+		const table=document.getElementById("mainTable");
+		const audioExt=["mp3","wav","ogg","flac","aac","m4s"];
+		const videoExt=["mp4","webm"];
+		const specialExt=["xm","spc"];
+		let fileList;//文件列表
+		let mediaWindow;//流媒体窗口
+		(async function(){
+			try{
+				fileList=await (await fetch("/?action=getPublicFileList")).json();
+			}catch(e){
+				alert("获取文件列表失败");
+				window.close();
+				return//防止close失败继续执行
+			}
+			for (let i = 0; i < fileList.length; i++) {
+				let newRow = table.insertRow(i + 1);
+				newRow.innerHTML =
+					`<a href="javascript:void(0)" onclick="downloadFile(this)">${fileList[i].name}</a><hr/>`
+				let cellSize = table.rows[i + 1].insertCell(0);
+				cellSize.innerHTML = `${byte2Mb(fileList[i].size)}MB<hr/>`;
+				let cellAction = table.rows[i + 1].insertCell(1);
+				cellAction.innerHTML =
+					'<button class="playMedia" type="button" onClick="launchMediaPlayer(this)">播放</button><hr/>'
+			}
+		})();
+		function byte2Mb(bytes) {
+			return parseFloat((bytes / 1024 / 1024).toFixed(2));
+		}
+		async function launchMediaPlayer(elem){
+			let fileName = elem.parentElement.parentElement.children[0].innerText;
+			let mediaType=getMediaType(fileName);
+			if(mediaType==="unknown"){
+				alert("无法打开:非媒体格式或格式不支持");
+				return
+			}else if(mediaType==="xm"){//ft2格式
+				if(mediaWindow!=null){
+					mediaWindow.close()
+				}
+				mediaWindow=window.open("/xmPlayer.ft2","mediaWindow",`height=${window.screen.width/6},width=${window.screen.width/5},left=${(window.screen.width-(window.screen.width/1.5))/2},top=0`);
+				mediaWindow.onload=()=>{
+					mediaWindow.init(true,fileName)
+				}
+				return
+			}else if(mediaType==="spc"){
+				if(mediaWindow!=null){
+					mediaWindow.close()
+				}
+				mediaWindow=window.open("/spc700.player","mediaWindow",`height=${window.screen.width/6},width=${window.screen.width/5},left=${(window.screen.width-(window.screen.width/1.5))/2},top=0`);
+				mediaWindow.onload=()=>{
+					mediaWindow.init(true,fileName)
+				}
+				return
+			}
+			if(mediaWindow!=null){//只能存在一个窗口 不然会出bug
+				mediaWindow.close()
+			}
+			mediaWindow=window.open("/mediaPlayer.subWindow","mediaWindow",`height=${mediaType==="audio"?window.screen.width/12:window.screen.width/1.5},width=${mediaType==="audio"?window.screen.width/5:window.screen.width/1.5},location=no,status=no,left=${(window.screen.width-(window.screen.width/1.5))/2},top=0`);
+			mediaWindow.onload=()=>{
+				mediaWindow.initMedia(fileName,mediaType.toUpperCase(),true)//isPublic
+			}
+		}
+		function getMediaType(name){
+			//提取后缀名
+			let slicedName=name.slice(name.toString().lastIndexOf(".")+1,name.toString().length);
+			if(audioExt.indexOf(slicedName)!==-1) return "audio"
+			if(videoExt.indexOf(slicedName)!==-1) return "video"
+			if(specialExt.includes(slicedName)) return slicedName.toLowerCase();
+			//sp
+			return "unknown"
+		}
+		async function downloadFile(elem){
+			window.open(`/?action=downloadPublieFile&name=${elem.innerText}`);
+			
+		}
+	</script>
+</html>

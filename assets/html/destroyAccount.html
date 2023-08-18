@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="private must-revalidate max-age=86400">
+		<meta http-equiv="Expires" content="86400">
+		<title>注销账户</title>
+	</head>
+	<body>
+		<h2>注销此账户</h2>
+		<br />
+		<a>注销后该账户将无法登录 同时其数据将在服务器管理员维护时(执行特定命令)清除</a><br />
+		<a>所有分享将在数据被清除后失效</a><br />
+		<a>确认注销?</a><br /><br />
+		<button id="confirmButton" type="button" disabled></button>
+		<h2 id="reqState" hidden>正在请求...</h2>
+	</body>
+	<style>
+		#confirmButton{
+			background-color: red;
+			width: 10%;
+			height: 6%;
+		}
+	</style>
+	<script>
+		async function sleep(time) {
+			return new Promise((resolve, reject) => {
+				setTimeout(() => {
+					resolve(null)
+				}, time)
+			})
+		}
+		async function timer(){
+			let resp;
+			for(let i=30;i>0;i--){
+				document.getElementById("confirmButton").innerText=`注销(${i.toString()})`;
+				await sleep(1000);
+			}
+			document.getElementById("confirmButton").innerText=`注销`;
+			document.getElementById("confirmButton").disabled=false;
+			document.getElementById("confirmButton").onclick=async ()=>{
+				if(confirm("确认注销账户\n此操作无法还原!")){
+					document.getElementById("reqState").hidden=false;
+					try{
+						resp=await (await fetch("/?action=destroyAccount",{credentials:'include'})).text();
+						if(resp==="SUCCESS"){
+							window.opener.logout();
+							alert("注销成功");
+							window.close();
+						}else{
+							alert("请求失败 返回异常");
+							document.getElementById("reqState").hidden=true;
+						}
+					}catch(e){
+						alert("请求失败 可能是网络异常");
+						document.getElementById("reqState").hidden=true;
+					}
+				}else{
+					window.close();
+				}
+			}
+		}
+		timer()
+	</script>
+</html>

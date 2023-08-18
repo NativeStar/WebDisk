@@ -1,0 +1,74 @@
+.loginMain {
+    position: fixed;
+    left: 50%;
+    top: 26%;
+}
+
+.accountInput {
+    position: fixed;
+    left: 46%;
+    top: 35%;
+}
+
+.passwordInput {
+    position: fixed;
+    left: 46%;
+    top: 47%;
+}
+.loginButton {
+    position: fixed;
+    left: 46%;
+    top: 65%;
+}
+.remBox{
+    position: fixed;
+    left: 46%;
+    top: 60%;
+}
+.buttonEle{
+    color: white;
+    background-color: aqua;
+    border: 0px;
+    width: 445%;
+}
+.loginTextClass{
+    position: fixed;
+    left: 46%;
+    top: 66%;
+}
+#regNew{
+    position: fixed;
+    left: 46%;
+    top: 72%;
+    color: white;
+    background-color: rgb(6, 247, 58);
+    border: 0px;
+    width: 12%;
+}
+#useHttpsText{
+    text-decoration: none;
+    color: rgb(249, 106, 53);
+}
+#useHttpsText:hover{
+    color: blueviolet;
+}
+#findPasswordText{
+    text-decoration: none;
+    color: red;
+    position: fixed;
+    left: 46%;
+    top: 75%;
+}
+#findPasswordText:hover{
+    color: brown;
+}
+#publicFileText{
+    color: green;
+    text-decoration: none;
+    float: right;
+    margin-right: 1%;
+    margin-top: -3%;
+}
+#publicFileText:hover{
+    color: greenyellow;
+}
